@@ -37,6 +37,7 @@ public class UserDao implements Dao<User>{
 
         return Optional.empty();
     }
+    
 
     @Override
     public List<User> getAll() {
