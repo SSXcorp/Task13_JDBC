@@ -20,7 +20,7 @@ public class ShoppingCartDao {
         this.connection = ConnectionFactory.getConnection();
     }
 
-    public void delete(int userId, int productId) { // was long, but database was already created
+    public void delete(int userId, int productId) { //delete single product
         try (PreparedStatement statement = connection.prepareStatement("DELETE FROM shopping_cart WHERE user_id = ? AND product_id = ?")) {
             statement.setInt(1, userId);
             statement.setInt(2, productId);
@@ -50,7 +50,7 @@ public class ShoppingCartDao {
         }
     }
 
-    public List<ShoppingCart> getAll() {
+    public List<ShoppingCart> getAll() { //to get all shopping cart table
         List<ShoppingCart> userDetails = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM shopping_cart");
              ResultSet resultSet = statement.executeQuery()) {
@@ -68,7 +68,27 @@ public class ShoppingCartDao {
         return userDetails;
     }
 
-    public void save(ShoppingCart shoppingCart) {
+    public List<ShoppingCart> getAllProducts(int userId) { //to get all products of one user
+        List<ShoppingCart> userShoppingCart = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM shopping_cart WHERE user_id = ?")) {
+            statement.setInt(1, userId);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                ShoppingCart shoppingCartUnit = new ShoppingCart();
+                shoppingCartUnit.setUserId(resultSet.getInt("user_id"));
+                shoppingCartUnit.setCartId(resultSet.getInt("cart_id"));
+                shoppingCartUnit.setProductId(resultSet.getInt("product_id"));
+                userShoppingCart.add(shoppingCartUnit);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error getting all products from the user's shopping cart", e);
+        }
+        return userShoppingCart;
+    }
+
+
+    public void save(ShoppingCart shoppingCart) { // to add product to user's shopping cart
         try (PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO Shopping_Cart (user_id, product_id) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             insertStatement.setInt(1, shoppingCart.getUserId());
             insertStatement.setInt(2, shoppingCart.getProductId());
@@ -91,7 +111,7 @@ public class ShoppingCartDao {
         }
     }
 
-    public String getStringOfProductsInShoppingCart(long userId) {
+    public String getStringOfProductsInShoppingCart(long userId) { //to get list of user's products as product_name String
         String listOfProducts = "";
         try (PreparedStatement statement = connection.prepareStatement("SELECT Products.product_name FROM Shopping_Cart JOIN Products ON Shopping_Cart.product_id = Products.product_id WHERE Shopping_Cart.user_id = ?")) {
             statement.setLong(1, userId);
@@ -106,7 +126,7 @@ public class ShoppingCartDao {
         return listOfProducts;
     }
 
-    public Double calculateTotalSum(long userId) {
+    public Double calculateTotalSum(long userId) { // to calculate total sum of all products in user's shopping cart
         double sum = 0.00;
         try (PreparedStatement statement = connection.prepareStatement("SELECT Products.price FROM Shopping_Cart JOIN Products ON Shopping_Cart.product_id = Products.product_id WHERE Shopping_Cart.user_id = ?")) {
             statement.setLong(1, userId);
@@ -120,7 +140,7 @@ public class ShoppingCartDao {
         return sum;
     }
 
-    public boolean doesUserHaveProductsInCart(long userId) {
+    public boolean doesUserHaveProductsInCart(long userId) { // to check if user has products in user's shopping cart
         boolean hasProducts = false;
         try (PreparedStatement statement = connection.prepareStatement("SELECT 1 FROM Shopping_Cart WHERE user_id = ?")) {
             statement.setLong(1, userId);

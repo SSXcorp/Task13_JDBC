@@ -17,30 +17,6 @@ public class OrdersDao {
         this.connection = ConnectionFactory.getConnection();
     }
 
-    public void save(ShoppingCart shoppingCart) {
-        try (PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO Shopping_Cart (user_id, product_id) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS)) {
-            insertStatement.setInt(1, shoppingCart.getUserId());
-            insertStatement.setInt(2, shoppingCart.getProductId());
-
-            int affectedRows = insertStatement.executeUpdate();
-
-            if (affectedRows == 0) {
-                throw new SQLException("Creating shopping cart unit failed, no rows affected.");
-            }
-
-            try (ResultSet generatedKeys = insertStatement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    shoppingCart.setCartId(generatedKeys.getInt(1));
-                } else {
-                    throw new SQLException("Creating shopping cart unit failed, no ID obtained.");
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Error creating shopping cart unit", e);
-        }
-    }
-
-
     public List<Orders> getAll() {
         List<Orders> orders = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM orders");
@@ -92,14 +68,6 @@ public class OrdersDao {
             }
 
         } catch (SQLException e) {throw new RuntimeException("Error creating shopping cart unit", e);}
-
-
     }
-
-    public void saveOrderFromShoppingCart(ShoppingCart shoppingCart) {
-
-
-    }
-
 
 }

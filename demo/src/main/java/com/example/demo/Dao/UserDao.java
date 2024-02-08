@@ -114,7 +114,7 @@ public class UserDao implements Dao<User>{
             }
 
             // If email doesn't exist for other users, proceed with the update
-            try (PreparedStatement updateStatement = connection.prepareStatement("UPDATE users SET username = ?, usersurname = ?, email = ? WHERE userId = ?")) {
+            try (PreparedStatement updateStatement = connection.prepareStatement("UPDATE users SET username = ?, usersurname = ?, email = ? WHERE user_id = ?")) {
                 updateStatement.setString(1, user.getUsername());
                 updateStatement.setString(2, user.getUsersurname());
                 updateStatement.setString(3, user.getEmail());

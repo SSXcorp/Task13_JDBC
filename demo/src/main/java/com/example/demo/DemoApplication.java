@@ -34,7 +34,7 @@ public class DemoApplication {
 //		userDao.save(newUser);
 
 		//to delete user by id
-//		userDao.delete(8);
+//		userDao.delete(25);
 
 		//to display ALL users
 //		List<User> users = userDao.getAll();
@@ -136,6 +136,16 @@ public class DemoApplication {
 		//===============================================================================================
 		ShoppingCartDao shoppingCartDao = new ShoppingCartDao();
 
+		List<ShoppingCart> items = shoppingCartDao.getAllProducts(4);
+
+		for (ShoppingCart item : items) {
+			System.out.println("Cart ID: " + item.getCartId());
+			System.out.println("User ID: " + item.getUserId());
+			System.out.println("Product ID: " + item.getProductId());
+			System.out.println("-------------------------");
+		}
+
+		System.out.println();
 
 //		ShoppingCart shoppingCart = new ShoppingCart(0, 1,12);
 //		shoppingCartDao.save(shoppingCart);
@@ -183,7 +193,7 @@ public class DemoApplication {
 //
 //		ordersDao.saveOrderFromShoppingCart(s,d,1);
 
-		OrderService.formOrder(9);
+//		OrderService.formOrder(9);
 
 
 
